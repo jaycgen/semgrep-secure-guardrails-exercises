@@ -1,0 +1,16 @@
+rules:
+  - id: tainted-ruamel
+    languages:
+      - python
+    severity: ERROR
+    message: "Insecure deserialization (called pickling in python) is when
+      user-controllable data is deserialized by an application. "
+    mode: taint
+    pattern-sources:
+      - label: USER_INPUT
+        pattern: self.path
+      - label: TYP_UNSAFE
+        pattern: ruamel.yaml.YAML(typ='unsafe')
+    pattern-sinks:
+      - requires: USER_INPUT and TYP_UNSAFE
+        pattern: $YAML.load(...)

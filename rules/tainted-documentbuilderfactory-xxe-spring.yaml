@@ -1,0 +1,36 @@
+rules:
+  - id: tainted-documentbuilderfactory-xxe-spring
+    languages:
+      - java
+    severity: ERROR
+    message: This can lead to XXE!
+    mode: taint
+    pattern-sources:
+      - label: USER_INPUT
+        patterns:
+        - pattern: |
+            public void $FUNC(..., @RequestParam(...) $TYPE $SOURCE, ...){
+              ...
+            }
+        - focus-metavariable: $SOURCE
+      - label: FACTORY
+        pattern: javax.xml.parsers.DocumentBuilderFactory.newInstance()
+      - label: DISABLE_DTD
+        by-side-effect: true
+        patterns:
+          - pattern-either:
+            - pattern: $DBF.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            - pattern: $DBF.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "")
+          - focus-metavariable: $DBF
+      - label: FSP
+        by-side-effect: true
+        patterns:
+          - pattern: $DBF.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
+          - focus-metavariable: $DBF
+    pattern-sinks:
+      - requires: USER_INPUT and FACTORY and not (DISABLE_DTD or FSP)
+        patterns:
+        - pattern: $DB.parse(...)
+        - metavariable-type:
+            type: javax.xml.parsers.DocumentBuilder
+            metavariable: $DB
