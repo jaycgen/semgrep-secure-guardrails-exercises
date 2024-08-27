@@ -1,0 +1,20 @@
+rules:
+  - id: cryptography-insecure-random
+    languages:
+      - python
+    severity: ERROR
+    message: When generating random data for use in cryptographic operations, such
+      as an initialization vector, use a secure random number generator.
+    mode: taint
+    options:
+      taint_focus_on: source
+    pattern-sources:
+      - pattern-either:
+        - pattern: b"..."
+        - pattern: bytes.from_hex("...")
+        - pattern: os.random(...)
+    pattern-sinks:
+      - patterns:
+        - pattern: cryptography.hazmat.primitives.ciphers.algorithms.ChaCha20($KEY, $NONCE)
+        - focus-metavariable: $NONCE
+    fix: os.urandom(8)
