@@ -1,0 +1,10 @@
+rules:
+  - id: pyramid-cookies
+    languages:
+      - python
+    severity: ERROR
+    message: Semgrep found a match
+    patterns:
+      - pattern: AuthTktCookieHelper($...ARGS)
+      - pattern-not: AuthTktCookieHelper(..., httponly=True)
+    fix: AuthTktCookieHelper($...ARGS, httponly=True)
