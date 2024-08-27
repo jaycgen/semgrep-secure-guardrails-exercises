@@ -1,0 +1,23 @@
+rules:
+  - id: formatted-sql-string
+    languages:
+      - java
+    severity: ERROR
+    message: SQL injection detected.
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $REQ
+        - metavariable-type:
+            type: HttpServletRequest
+            metavariable: $REQ
+    pattern-sinks:
+      - patterns:
+        - pattern: $CON.$FUNC($REQ)
+        - metavariable-regex:
+            metavariable: $FUNC
+            regex: (executeQuery|execute|query|prepare)
+    pattern-propagators:
+      - pattern: $L.append($REQ)
+        from: $REQ
+        to: $L

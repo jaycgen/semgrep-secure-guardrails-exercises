@@ -1,0 +1,20 @@
+rules:
+  - id: find-runtime-exec-taint
+    languages:
+      - java
+    severity: ERROR
+    message: Match Runtime.exec() but not other calls to exec()
+    mode: taint
+    pattern-sources:
+      - pattern: (HttpServletRequest $REQ)
+    pattern-sinks:
+      - patterns:
+        - pattern: $RT.exec(...)
+        - metavariable-type:
+            metavariable: $RT
+            type: java.lang.Runtime
+    pattern-sanitizers:
+      - pattern: $REQ.getSafeParam(...)
+    options:
+      taint_assume_safe_numbers: true
+      taint_assume_safe_booleans: true

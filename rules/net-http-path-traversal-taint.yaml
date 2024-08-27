@@ -1,0 +1,18 @@
+rules:
+  - id: net-http-path-traversal-taint
+    languages:
+      - go
+    severity: ERROR
+    message: Found a Path Traversal vulnerability with $SINK.
+    mode: taint
+    pattern-sources:
+      - patterns:
+        - pattern: $REQ
+        - metavariable-type:
+            metavariable: $REQ
+            type: |
+              *http.Request
+    pattern-sinks:
+      - pattern: os.Open(...)
+    pattern-sanitizers:
+      - pattern: path.Clean($REQ)
