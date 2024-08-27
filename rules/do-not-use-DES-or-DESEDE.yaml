@@ -1,0 +1,7 @@
+rules:
+  - id: do-not-use-DES-or-DESEDE
+    languages:
+      - java
+    severity: ERROR
+    message: Any route that is not the index function should check SecFetchMetadata
+    pattern-regex: Cipher\.getInstance\(\".*DES.*\"\)
