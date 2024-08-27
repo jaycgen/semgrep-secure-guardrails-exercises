@@ -1,0 +1,17 @@
+rules:
+  - id: taint-demo
+    languages:
+      - python
+    message: Taint reaches the sink!
+    severity: ERROR
+    mode: taint
+    pattern-sources:
+      - pattern: source()
+    pattern-sinks:
+      - pattern: sink(...)
+    pattern-sanitizers:
+      - pattern: sanitize(...)
+    pattern-propagators:
+      - pattern: $D.add($S)
+        from: $S
+        to: $D
