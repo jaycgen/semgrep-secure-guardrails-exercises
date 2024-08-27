@@ -1,0 +1,14 @@
+rules:
+  - id: java-cookie-addsecurecookie
+    languages:
+      - java
+    severity: ERROR
+    message: Use the secure default provided by CookieHelper to add cookies to requests.
+    patterns:
+      - pattern: $REQ.addCookie($COOKIE);
+      - pattern-not-inside: |-
+          class CookieHelper {
+            ...
+          }
+    fix: |
+      CookieHelper.addSecureCookie($REQ, $COOKIE);

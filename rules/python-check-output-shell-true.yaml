@@ -1,0 +1,15 @@
+rules:
+  - id: python-check-output-shell-true
+    languages:
+      - python
+    severity: ERROR
+    message: Found use of banned function `check_output()`
+    patterns:
+      - pattern: subprocess.check_output($...B, shell=$TRUE, $...A)
+      - pattern-not: subprocess.check_output("...", ...)
+      - metavariable-pattern:
+          metavariable: $TRUE
+          pattern: "True"
+      - focus-metavariable: $TRUE
+    fix: |
+      False
