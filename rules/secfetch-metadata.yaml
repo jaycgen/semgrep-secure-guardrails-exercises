@@ -1,0 +1,25 @@
+rules:
+  - id: secfetch-metadata
+    languages:
+      - rust
+    message: Any route that is not the index function should check SecFetchMetadata
+    severity: WARNING
+    patterns:
+      - pattern-inside: |
+          #[get(...)]
+          fn $F(...){
+            ...
+          }
+      - pattern: |
+          fn $F(...){
+            ...
+          }
+      - pattern-not: |
+          fn $F(..., $SFM: SecFetchMetadata, ...){
+            ...
+          }
+      - pattern-not: |
+          fn index(...){
+            ...
+          }
+      - focus-metavariable: $F
