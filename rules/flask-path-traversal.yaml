@@ -1,0 +1,17 @@
+rules:
+  - id: flask-path-traversal
+    languages:
+      - python
+    severity: ERROR
+    message: $INPUT
+    mode: taint
+    pattern-sources:
+      - pattern: flask.request.args
+    pattern-sinks:
+      - patterns:
+        - pattern-either:
+          - pattern: os.open($SINK, ...)
+          - pattern: os.open(..., path=$SINK, ...)
+        - focus-metavariable: $SINK
+    options:
+      taint_assume_safe_functions: true
