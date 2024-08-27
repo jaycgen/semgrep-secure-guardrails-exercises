@@ -1,0 +1,15 @@
+rules:
+  - id: fastapi-tainted-queryparam
+    languages:
+      - python
+    severity: ERROR
+    message: $ROUTE $VAR
+    patterns:
+      - pattern: |-
+          @app.$FUNC("$ROUTE")
+          async def create_item(..., $VAR, ...):
+            ...
+      - metavariable-comparison:
+          comparison: |
+            str($VAR) not in $ROUTE
+      - focus-metavariable: $VAR

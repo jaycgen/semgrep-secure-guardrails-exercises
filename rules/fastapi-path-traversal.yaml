@@ -1,0 +1,19 @@
+rules:
+  - id: fastapi-path-traversal
+    languages:
+      - python
+    severity: ERROR
+    message: |
+      $ROUTE - $RPARAM - $PARAM 
+    patterns:
+      - patterns:
+          - pattern: |-
+              @app.get("$ROUTE")
+              def $F(..., $PARAM, ...):
+                ...
+          - metavariable-regex:
+              metavariable: $ROUTE
+              regex: (.*{(?P<RPARAM>.*):path}.*)
+      - metavariable-comparison:
+          comparison: str($PARAM) == str($RPARAM)
+      - focus-metavariable: $PARAM

@@ -1,0 +1,10 @@
+rules:
+  - id: use-of-weak-rsa-key
+    languages:
+      - go
+    severity: ERROR
+    message: Weak RSA key detected `$KEYSIZE`, it is recommended to be 2048 or higher.
+    patterns:
+      - pattern: rsa.GenerateKey(...,$KEYSIZE)
+      - metavariable-comparison:
+          comparison: $KEYSIZE < 2048

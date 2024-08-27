@@ -1,0 +1,13 @@
+rules:
+  - id: typed-logger
+    languages:
+      - java
+    severity: ERROR
+    message: |
+      Dot not use this logger! Use our in-house solution instead.
+    patterns:
+      - pattern: $L.log($R)
+      - pattern-not: (our.own.inhouse.Logger $L).log(...)
+      - metavariable-type:
+          metavariable: $R
+          type: LogRecord

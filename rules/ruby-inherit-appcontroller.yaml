@@ -1,0 +1,28 @@
+rules:
+  - id: ruby-inherit-appcontroller
+    languages:
+      - ruby
+    severity: ERROR
+    message: |
+      $CONTROLLER
+    patterns:
+      - pattern-either:
+          - pattern: |-
+              class $CONTROLLER
+                ...
+              end
+          - pattern: |-
+              class $CONTROLLER < $OTHER
+                ...
+              end
+      - pattern-not: |-
+          class $CONTROLLER < ApplicationController
+            ...
+          end
+      - pattern-not: |-
+          class $CONTROLLER < ActionController::Base
+            ...
+          end
+      - metavariable-regex:
+          metavariable: $CONTROLLER
+          regex: .*Controller
